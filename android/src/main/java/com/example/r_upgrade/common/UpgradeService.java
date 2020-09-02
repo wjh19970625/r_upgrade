@@ -441,11 +441,20 @@ public class UpgradeService extends Service {
                     connection.setSSLSocketFactory(ssf);
                     connection.setDoInput(true);
                     int code = connection.getResponseCode();
-                    RUpgradeLogger.get().d(TAG, "run: code=" + code);
-                    connection.connect();
-                    is = connection.getInputStream();
-                    if (isNewDownload) {
-                        maxLength = connection.getContentLength();
+                    if (301 == code) {
+                        //获取重定向后的url
+                        String realUrl = connection.getHeaderField("Location");
+                        RUpgradeLogger.get().d(TAG, "run: code=" + realUrl);
+                        this.url = realUrl;
+                        run();
+                        return;
+                    } else {
+                        RUpgradeLogger.get().d(TAG, "run: code=" + code);
+                        connection.connect();
+                        is = connection.getInputStream();
+                        if (isNewDownload) {
+                            maxLength = connection.getContentLength();
+                        }
                     }
                 } else {
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -462,11 +471,20 @@ public class UpgradeService extends Service {
                     }
                     connection.setDoInput(true);
                     int code = connection.getResponseCode();
-                    RUpgradeLogger.get().d(TAG, "run: code=" + code);
-                    connection.connect();
-                    is = connection.getInputStream();
-                    if (isNewDownload) {
-                        maxLength = connection.getContentLength();
+                    if (301 == code) {
+                        //获取重定向后的url
+                        String realUrl = connection.getHeaderField("Location");
+                        RUpgradeLogger.get().d(TAG, "run: code=" + realUrl);
+                        this.url = realUrl;
+                        run();
+                        return;
+                    } else {
+                        RUpgradeLogger.get().d(TAG, "run: code=" + code);
+                        connection.connect();
+                        is = connection.getInputStream();
+                        if (isNewDownload) {
+                            maxLength = connection.getContentLength();
+                        }
                     }
                 }
                 assert (is != null);
